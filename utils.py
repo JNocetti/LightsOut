@@ -68,7 +68,7 @@ def existePosicion(ai, aj, matriz):
     else:
         return False
     
-def convertirAX(i, j, matriz):
+def convertirAX(matriz):
     matrizAX = np.full((matriz.shape[0], matriz.shape[1]), '  ')
     i = 0
     j = 0
@@ -89,7 +89,7 @@ def crearEcuaciones(matriz):
     i = 0
     j = 0
 
-    matrizAX = convertirAX(i, j, matriz)
+    matrizAX = convertirAX(matriz)
 
     for i in range(matriz.shape[0]):
         for j in range(matriz.shape[1]):
