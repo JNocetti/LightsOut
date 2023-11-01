@@ -8,26 +8,15 @@ de estado las luces adyacentes a la presionada.
 Mostremos un ejemplo de una jugada. Modelaremos el tablero del juego como una matriz n × n con
 entradas 1 (luz prendida) y 0 (luz apagada). Utilizaremos la notaci´on est´andar aij para la luz que se
 encuentra en la fila i y la columna j. Supongamos que el juego se encuentra en el siguiente estado
-
-
-0 0 1 1 1
-0 1 1 1 0
-1 0 0 1 1
-1 1 0 0 1
-0 1 1 1 0
-
-
+
+![1](https://github.com/JNocetti/LightsOut/assets/88642593/23365861-7de8-4ee5-b6ae-e6aaa8ca7651)
+
 Si presionamos la luz que se encuentra en la entrada a43 (que est´a apagada), la cambiaremos de estado
 as´ı como a sus cuatro luces adyacentes, obteniendo el estado
-
-
-0 0 1 1 1
-0 1 1 1 0
-1 0 1 1 1
-1 0 1 1 1
-0 1 0 1 0
-
-
+
+![2](https://github.com/JNocetti/LightsOut/assets/88642593/8c35224f-9b54-47c1-82b2-017b8bb5fbaf)
+
+
 Es posible probar el juego de forma online. Recomendamos probar algunas veces el juego en tableros
 de distintos tama˜nos, para familiarizarse con las reglas.
 Se pide:
@@ -43,30 +32,21 @@ Se pide:
 3. Justifique por qu´e el modelo matem´atico anterior es correcto para modelar las soluciones del juego.
 Veamos un ejemplo en un tablero m´as chico. Tambi´en usaremos este ejemplo para proponer un sistema
 lineal de ecuaciones que encuentre una soluci´on del juego. Supongamos que tenemos el tablero
-
-
-0 1 0
-1 1 0
-0 0 1
-
-
+
+![3](https://github.com/JNocetti/LightsOut/assets/88642593/bfe1f2cd-032a-47b3-8479-b7f41ad7cfa4)
+
+
 Este estado del juego puede ganarse presionando las luces a33 y a22 (¿importa el orden en que las
 presionamos?). Al presionar la luz a33 obtenemos el estado
-
-
-0 1 0
-1 1 1
-0 1 0
-
-
+
+![4](https://github.com/JNocetti/LightsOut/assets/88642593/9fc8f7f5-9460-4fef-a767-06990a5b178f)
+
+
 donde al presionar la luz a22 obtenemos
-
-
-0 0 0
-0 0 0
-0 0 0
-
-
+
+![5](https://github.com/JNocetti/LightsOut/assets/88642593/7549b94b-5cc3-4b97-8bfd-1847d92e1317)
+
+
 que corresponde a la victoria del jugador. En t´erminos del modelo matem´atico propuesto, la soluci´on ser´a
 el vector (0, 0, 0, 0, 1, 0, 0, 0, 1), donde x5 = x9 = 1 y xi = 0 para i ∈ {1, 2, 3, 4, 6, 7, 8}.
 Vamos a plantear un sistema de ecuaciones que permita resolver el problema. La idea es que x1, x2, . . . , xn2
@@ -86,18 +66,10 @@ el miembro izquierdo de la igualdad representa los cambios de estado que ocurren
 miembro de la derecha es cero porque dado el tablero inicial con el que estamos trabajando, no queremos
 que haya cambio de estado en la luz a11. Si continuamos con esta l´ogica para todas las luces obtenemos
 el sistema de ecuaciones
-
-
-
-x1 + x2 + x4 = 0
-x1 + x2 + x3 + x5 = 1
-x2 + x3 + x6 = 0
-x1 + x4 + x5 + x7 = 1
-x2 + x4 + x5 + x6 + x8 = 1
-x3 + x5 + x6 + x9 = 0
-x4 + x7 + x8 = 0
-x5 + x7 + x8 + x9 = 0
-x6 + x8 + x9 = 1
+
+
+![7](https://github.com/JNocetti/LightsOut/assets/88642593/9e7d8dc3-2643-4c5c-859b-8aff32554747)
+
 Se pide:
 4. Justifique detalladamente la construcci´on de las otras ecuaciones del sistema en este ejemplo.
 5. Verifique que la soluci´on encontrada anteriormente donde x5 = x9 = 1 y xi = 0 para i ∈
