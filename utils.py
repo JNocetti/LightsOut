@@ -1,4 +1,6 @@
 import numpy as np
+import itertools
+
 
 def crearMatriz(filas, columnas):
     return np.random.randint(2, size=(filas, columnas))
@@ -85,6 +87,7 @@ def devolverPosX(i, j, matrizAX):
         return matrizAX[i][j]
 
 def crearEcuaciones(matriz):
+
     matrizEcuaciones = []
     i = 0
     j = 0
@@ -109,5 +112,104 @@ def crearEcuaciones(matriz):
             ecuacion = strEcuacion
             matrizEcuaciones.append(ecuacion)
     for num in range(len(matrizEcuaciones)):
-        print(matrizEcuaciones[num] + "\n")
+        print(matrizEcuaciones[num])
     return matrizEcuaciones
+
+def devolver_posicion_i_j(x):
+    vector = ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9']
+    for i in range(len(vector)):
+      if vector[i] == x:
+        return i
+
+def crearA_B(matriz, sistema_ecuaciones):
+    A = np.zeros((len(sistema_ecuaciones), len(sistema_ecuaciones)))
+    B = np.zeros((9 , 1))
+
+    
+
+    for n_ecuacion in range(len(sistema_ecuaciones)):
+        
+        ecuacion = sistema_ecuaciones[n_ecuacion]
+        #ecuacion = ecuacion.replace(" ", "")
+        ecuacion =ecuacion.replace("+", "")
+        parteIzquierda = ecuacion.split('=')
+        cantidad_variables = len(parteIzquierda[0])
+        cant_splits = cantidad_variables / 2
+        cant_splits = int(cant_splits)
+        partes_x = parteIzquierda[0].split(' ') 
+        #for parte in partes_x:
+            #if parte:
+        partes_x = [parte for parte in parteIzquierda[0].split(' ') if parte]
+ 
+        for i in range(len(partes_x)):  
+            x = partes_x[i]  
+            pos_i = n_ecuacion
+            pos_j = devolver_posicion_i_j(x)  
+            A[pos_i][pos_j] = 1 
+
+        parteIzq = parteIzquierda[1].replace(" ", "")
+        B[n_ecuacion] = int(parteIzq)
+    
+    print("A")
+    print(A)
+
+
+    print("B") 
+    print(B)
+    return A, B
+
+# Método de Gauss
+# Solución a Sistemas de Ecuaciones
+# de la forma A.X=B
+def resolverJuego(matriz, sistema_ecuaciones):
+    A, B = crearA_B(matriz, sistema_ecuaciones)
+    
+    # Matriz aumentada
+    AB  = np.concatenate((A,B),axis=1)
+    AB0 = np.copy(AB)
+
+    # Pivoteo parcial por filas
+    tamano = np.shape(AB)
+    n = tamano[0]
+    m = tamano[1]
+    # Para cada fila en AB
+    for i in range(0,n-1,1):
+        # columna desde diagonal i en adelante
+        columna  = abs(AB[i:,i])  #todas las filas desde i hasta el final de la matriz y solo la columna i.
+        dondemax = np.argmax(columna) #identifica la posición del elemento más grande en columna.
+
+        # dondemax no está en diagonal
+        if (dondemax !=0):
+            # intercambia filas
+            temporal = np.copy(AB[i,:])
+            AB[i,:] = AB[dondemax+i,:]
+            AB[dondemax+i,:] = temporal
+    AB1 = np.copy(AB)
+
+    # eliminación hacia adelante (por filas)
+    for i in range(0,n-1,1):
+        pivote   = AB[i,i]
+        adelante = i + 1
+        for k in range(adelante,n,1):  # k inicia de adelante hasta la últim fila avanzando fila por fila
+            factor  = AB[k,i]/pivote
+            AB[k,:] = AB[k,:] - AB[i,:]*factor
+
+    # sustitución hacia atrás
+    ultfila = n-1
+    ultcolumna = m-1
+    X = np.zeros(n,dtype=float)
+
+    for i in range(ultfila,0-1,-1):  # Para incluir el primera fila valor (0-1) en pasos de -1
+        suma = 0
+        for j in range(i+1,ultcolumna,1):
+            suma = suma + AB[i,j]*X[j]
+        b = AB[i,ultcolumna]
+        X[i] = (b-suma)/AB[i,i]
+
+    X = np.transpose([X])
+
+    # SALIDA
+    print('solución: ')
+    print(X)
+    return X
+
