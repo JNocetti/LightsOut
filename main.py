@@ -9,8 +9,20 @@ matriz = utils.crearMatriz(filas, columnas)
 
 
 
+
+print("Matriz de luces: ")
 print(matriz)
+
+print("Ecuaciones: ")
 ecuaciones = utils.crearEcuaciones(matriz)
+
+print("Matriz A y B: ")
+xayb = utils.crearA_B(matriz, ecuaciones)
+
+print("Solución: ")
+s = utils.del_primo(matriz, ecuaciones)
+# solucion = utils.resolverJuego(matriz, ecuaciones)
+
 # cambiar = input("Presione C para cambiar luces: ")
 # while (cambiar == "C" or cambiar == "c"):
 #     ai = int(input("Ingrese la fila del elemento: "))
