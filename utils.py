@@ -112,3 +112,23 @@ def crearEcuaciones(matriz):
         print(matrizEcuaciones[num] + "\n")
     return matrizEcuaciones
 
+def resolver_sistema_lights_out(matriz):
+
+    n = matriz.shape[0]
+    
+    matriz_coeficientes = np.zeros((n * n, n * n), dtype=int)
+    vector_resultados = np.zeros(n * n, dtype=int)
+    
+    for i in range(n * n):
+        cambios = obtenerCambios(i // n, i % n, matriz)
+        matriz_coeficientes[i][i] = len(cambios)
+        for cambio in cambios:
+            matriz_coeficientes[i][cambio[0] * n + cambio[1]] = -1
+        vector_resultados[i] = matriz[i // n][i % n]
+        
+
+    solucion = np.linalg.solve(matriz_coeficientes, vector_resultados)
+    sol = np.round(solucion).astype(int)
+    cadena = str(sol)
+    cadena = cadena.replace("-", " ")
+    return cadena

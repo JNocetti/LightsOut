@@ -7,10 +7,10 @@ filas = 3
 columnas = 3
 matriz = utils.crearMatriz(filas, columnas)
 
-utils.crearEcuaciones(matriz)
+
 
 print(matriz)
-
+ecuaciones = utils.crearEcuaciones(matriz)
 # cambiar = input("Presione C para cambiar luces: ")
 # while (cambiar == "C" or cambiar == "c"):
 #     ai = int(input("Ingrese la fila del elemento: "))
@@ -18,4 +18,5 @@ print(matriz)
 #     matriz = utils.cambiarLuces(ai, aj, matriz)
 #     print(matriz)
 #     cambiar = input("Presione C para cambiar luces o cualquier tecla para salir: ")
-    
+solucion =  utils.resolver_sistema_lights_out( matriz)
+print(solucion)
