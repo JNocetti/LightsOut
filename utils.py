@@ -111,8 +111,8 @@ def crearEcuaciones(matriz):
             strEcuacion += ' = ' + str(matriz[i][j])
             ecuacion = strEcuacion
             matrizEcuaciones.append(ecuacion)
-    for num in range(len(matrizEcuaciones)):
-        print(matrizEcuaciones[num])
+    # for num in range(len(matrizEcuaciones)):
+    #     print(matrizEcuaciones[num])
     return matrizEcuaciones
 
 def devolver_posicion_i_j(x):
@@ -150,12 +150,12 @@ def crearA_B(matriz, sistema_ecuaciones):
         parteIzq = parteIzquierda[1].replace(" ", "")
         B[n_ecuacion] = int(parteIzq)
     
-    print("A")
-    print(A)
+    # print("A")
+    # print(A)
 
 
-    print("B") 
-    print(B)
+    # print("B") 
+    # print(B)
     return A, B
 
 # Método de Gauss
@@ -168,10 +168,44 @@ def resolverJuego(matriz, sistema_ecuaciones):
     AB  = np.concatenate((A,B),axis=1)
     AB0 = np.copy(AB)
 
-    # Pivoteo parcial por filas
     tamano = np.shape(AB)
     n = tamano[0]
     m = tamano[1]
+    AB = pivoteo_parcial(AB, n, m)
+    AB1 = np.copy(AB)
+
+    # eliminación hacia adelante (por filas)
+    for i in range(0,n-1,1):
+        AB = pivoteo_parcial(AB,n, m)
+        pivote   = AB[i,i]
+        adelante = i + 1
+        for k in range(adelante,n,1):  # k inicia de adelante hasta la últim fila avanzando fila por fila
+            factor  = AB[k,i]/pivote
+            AB = AB.astype(int)
+            AB[k,:] = (AB[k,:]) ^ (AB[i,:]* int(factor))
+
+    # sustitución hacia atrás
+    ultfila = n-1
+    ultcolumna = m-1
+    X = np.zeros(n,dtype=float)
+
+    for i in range(ultfila,0-1,-1):  # Para incluir el primera fila valor (0-1) en pasos de -1
+        suma = 0
+        for j in range(i+1,ultcolumna,1):
+            suma = suma + AB[i,j]*X[j]
+        b = AB[i,ultcolumna] #valor de la matriz B en la fila i
+        #X[i] = (b-suma)/AB[i,i]
+        X[i] = (b - suma) % 2
+
+    X = np.transpose([X])
+
+    # SALIDA
+    print(X)
+    return X
+
+def pivoteo_parcial(AB, n, m):
+    # Pivoteo parcial por filas
+
     # Para cada fila en AB
     for i in range(0,n-1,1):
         # columna desde diagonal i en adelante
@@ -184,32 +218,4 @@ def resolverJuego(matriz, sistema_ecuaciones):
             temporal = np.copy(AB[i,:])
             AB[i,:] = AB[dondemax+i,:]
             AB[dondemax+i,:] = temporal
-    AB1 = np.copy(AB)
-
-    # eliminación hacia adelante (por filas)
-    for i in range(0,n-1,1):
-        pivote   = AB[i,i]
-        adelante = i + 1
-        for k in range(adelante,n,1):  # k inicia de adelante hasta la últim fila avanzando fila por fila
-            factor  = AB[k,i]/pivote
-            AB[k,:] = AB[k,:] - AB[i,:]*factor
-
-    # sustitución hacia atrás
-    ultfila = n-1
-    ultcolumna = m-1
-    X = np.zeros(n,dtype=float)
-
-    for i in range(ultfila,0-1,-1):  # Para incluir el primera fila valor (0-1) en pasos de -1
-        suma = 0
-        for j in range(i+1,ultcolumna,1):
-            suma = suma + AB[i,j]*X[j]
-        b = AB[i,ultcolumna]
-        X[i] = (b-suma)/AB[i,i]
-
-    X = np.transpose([X])
-
-    # SALIDA
-    print('solución: ')
-    print(X)
-    return X
-
+    return AB
