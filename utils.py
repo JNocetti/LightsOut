@@ -12,6 +12,7 @@ def cambiarLuces(ai, aj, matriz):
     else:
         if matriz[ai][aj] == 0:
             matriz[ai][aj] = 1
+            
         else:
             matriz[ai][aj] = 0
     
@@ -71,7 +72,7 @@ def existePosicion(ai, aj, matriz):
         return False
     
 def convertirAX(matriz):
-    matrizAX = np.full((matriz.shape[0], matriz.shape[1]), '  ')
+    matrizAX = np.full((matriz.shape[0], matriz.shape[1]), '    ')
     i = 0
     j = 0
     cont = 1
@@ -123,7 +124,7 @@ def devolver_posicion_i_j(x):
 
 def crearA_B(matriz, sistema_ecuaciones):
     A = np.zeros((len(sistema_ecuaciones), len(sistema_ecuaciones)))
-    B = np.zeros((9 , 1))
+    B = np.zeros((len(sistema_ecuaciones) , 1))
 
     
 
@@ -175,14 +176,18 @@ def resolverJuego(matriz, sistema_ecuaciones):
     AB1 = np.copy(AB)
 
     # eliminación hacia adelante (por filas)
+    cont = 1
     for i in range(0,n-1,1):
         AB = pivoteo_parcial(AB,n, m)
         pivote   = AB[i,i]
         adelante = i + 1
         for k in range(adelante,n,1):  # k inicia de adelante hasta la últim fila avanzando fila por fila
-            factor  = AB[k,i]/pivote
-            AB = AB.astype(int)
-            AB[k,:] = (AB[k,:]) ^ (AB[i,:]* int(factor))
+            if(pivote!= 0):
+                factor  = AB[k,i]/pivote
+                AB = AB.astype(int)
+                print(cont)
+                cont = cont + 1
+                AB[k,:] = (AB[k,:]) ^ (AB[i,:]* int(factor))
 
     # sustitución hacia atrás
     ultfila = n-1

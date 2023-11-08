@@ -1,76 +1,50 @@
-# import numpy as np
-# import utils
-
-# # filas = int(input("Ingrese el número de filas: "))
-# # columnas = int(input("Ingrese el número de columnas: "))
-# filas = 3
-# columnas = 3
-# matriz = utils.crearMatriz(filas, columnas)
-
-
-
-
-# print("Matriz de luces: ")
-# print(matriz)
-
-# # print("Ecuaciones: ")
-# ecuaciones = utils.crearEcuaciones(matriz)
-
-# # print("Matriz A y B: ")
-# xayb = utils.crearA_B(matriz, ecuaciones)
-
-# print("Solución: ")
-# solucion = utils.resolverJuego(matriz, ecuaciones)
-
-# cambiar = input("Presione C para cambiar luces: ")
-# while (cambiar == "C" or cambiar == "c"):
-#     ai = int(input("Ingrese la fila del elemento: "))
-#     aj = int(input("Ingrese la columna del elemento: "))
-#     matriz = utils.cambiarLuces(ai, aj, matriz)
-#     print(matriz)
-#     cambiar = input("Presione C para cambiar luces o cualquier tecla para salir: ")
-    
-
-
 import tkinter as tk
 from tkinter import ttk
 import numpy as np
 import utils
 from PIL import Image, ImageTk
+from tkinter import messagebox
 
-matriz = []
+canvas = None
+ancho_celda = 0
+altura_celda = 0
+ventana_matriz = None
+matriz = [] 
 
-def ver_solucion():
-    print(matriz)
-    ecuaciones = utils.crearEcuaciones(matriz)
-    solucion = utils.resolverJuego(matriz, ecuaciones)
-    texto_resultado.set(f"La solución es: {solucion}")
+def ver_solucion():  
+    if(len(matriz) != 0):
+        print(matriz)
+        ecuaciones = utils.crearEcuaciones(matriz)
+        solucion = utils.resolverJuego(matriz, ecuaciones)
+        texto_resultado.set(f"La solución es: {solucion}")
+    else:
+        messagebox.showinfo("Error", "Primero debes generar una matriz")
 
 def generar_matriz():
     global matriz
     filas = int(entry_filas.get())
     columnas = int(entry_columnas.get())
     matriz = utils.crearMatriz(filas, columnas)
-    # texto_matriz.set(str(matriz))
-    mostrar_matriz(matriz)
+    mostrar_matriz(matriz) 
 
 def mostrar_matriz(matriz):
+    global canvas, ancho_celda, altura_celda, ventana_matriz
     filas = len(matriz)
     columnas = len(matriz[0])
 
-    ancho_celda = 100
-    altura_celda = 100
-    grosor_linea = 3  # Grosor de la línea divisoria
+    if canvas is None:
+        ancho_ventana = 600
+        altura_ventana = 600
 
-    ancho_ventana = ancho_celda * columnas
-    altura_ventana = altura_celda * filas
+        ventana_matriz = tk.Toplevel()
+        ventana_matriz.title("Matriz")
+        ventana_matriz.geometry(f"{ancho_ventana}x{altura_ventana}")
 
-    ventana_matriz = tk.Toplevel()
-    ventana_matriz.title("Matriz")
-    ventana_matriz.geometry(f"{ancho_ventana}x{altura_ventana}+600+100")
+        ancho_celda = ancho_ventana // columnas
+        altura_celda = altura_ventana // filas
 
-    canvas = tk.Canvas(ventana_matriz, width=ancho_ventana, height=altura_ventana)
-    canvas.pack()
+        canvas = tk.Canvas(ventana_matriz, width=ancho_ventana, height=altura_ventana)
+        canvas.pack()
 
     for i in range(filas):
         for j in range(columnas):
@@ -80,12 +54,37 @@ def mostrar_matriz(matriz):
             y1 = y0 + altura_celda
 
             color = 'green' if matriz[i][j] == 1 else 'red'
-            canvas.create_rectangle(x0, y0, x1, y1, fill=color, width=grosor_linea)
+            cell = canvas.create_rectangle(x0, y0, x1, y1, fill=color)
 
-            # Agregar el valor de la celda en el centro
-            canvas.create_text(x0 + ancho_celda // 2, y0 + altura_celda // 2, text=str(matriz[i][j]))
+    canvas.bind("<Button-1>", on_cell_click)
 
+def on_cell_click(event):
+    global canvas, ancho_celda, altura_celda, matriz  # Asegurarse de usar las variables globales
 
+    widget = event.widget
+    x, y = widget.canvasx(event.x), widget.canvasy(event.y)
+    col = int(x // ancho_celda)
+    fila = int(y // altura_celda)
+
+    nueva_matriz = utils.cambiarLuces(fila, col, matriz)
+    actualizar_matriz(nueva_matriz)
+
+    if all_zeroes(nueva_matriz):
+        messagebox.showinfo("Fin del juego", "¡Has ganado, todas las luces están apagadas!")
+        canvas.unbind("<Button-1>")
+
+def actualizar_matriz(nueva_matriz):
+    global canvas, ventana_matriz, matriz
+    canvas.delete("all")
+    matriz = nueva_matriz
+    mostrar_matriz(nueva_matriz)
+
+def all_zeroes(matriz):
+    for fila in matriz:
+        for elemento in fila:
+            if elemento != 0:
+                return False
+    return True
 
 ventana = tk.Tk()
 ventana.title("Lights out")
