@@ -1,5 +1,4 @@
 import numpy as np
-import itertools
 
 
 def crearMatriz(filas, columnas):
@@ -159,9 +158,8 @@ def crearA_B(matriz, sistema_ecuaciones):
     # print(B)
     return A, B
 
-# Método de Gauss
-# Solución a Sistemas de Ecuaciones
-# de la forma A.X=B
+
+
 def resolverJuego(matriz, sistema_ecuaciones):
     A, B = crearA_B(matriz, sistema_ecuaciones)
     
