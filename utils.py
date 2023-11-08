@@ -11,6 +11,7 @@ def cambiarLuces(ai, aj, matriz):
     else:
         if matriz[ai][aj] == 0:
             matriz[ai][aj] = 1
+            
         else:
             matriz[ai][aj] = 0
     
@@ -70,7 +71,7 @@ def existePosicion(ai, aj, matriz):
         return False
     
 def convertirAX(matriz):
-    matrizAX = np.full((matriz.shape[0], matriz.shape[1]), '  ')
+    matrizAX = np.full((matriz.shape[0], matriz.shape[1]), '    ')
     i = 0
     j = 0
     cont = 1
@@ -110,8 +111,8 @@ def crearEcuaciones(matriz):
             strEcuacion += ' = ' + str(matriz[i][j])
             ecuacion = strEcuacion
             matrizEcuaciones.append(ecuacion)
-    for num in range(len(matrizEcuaciones)):
-        print(matrizEcuaciones[num])
+    # for num in range(len(matrizEcuaciones)):
+    #     print(matrizEcuaciones[num])
     return matrizEcuaciones
 
 def devolver_posicion_i_j(x):
@@ -122,7 +123,7 @@ def devolver_posicion_i_j(x):
 
 def crearA_B(matriz, sistema_ecuaciones):
     A = np.zeros((len(sistema_ecuaciones), len(sistema_ecuaciones)))
-    B = np.zeros((9 , 1))
+    B = np.zeros((len(sistema_ecuaciones) , 1))
 
     
 
@@ -149,12 +150,12 @@ def crearA_B(matriz, sistema_ecuaciones):
         parteIzq = parteIzquierda[1].replace(" ", "")
         B[n_ecuacion] = int(parteIzq)
     
-    print("A")
-    print(A)
+    # print("A")
+    # print(A)
 
 
-    print("B") 
-    print(B)
+    # print("B") 
+    # print(B)
     return A, B
 
 
@@ -163,34 +164,61 @@ def resolverJuego(matriz, sistema_ecuaciones):
     A, B = crearA_B(matriz, sistema_ecuaciones)
     
     # Matriz aumentada
-    AB = np.concatenate((A, B), axis=1)
-    n = A.shape[0]
+    AB  = np.concatenate((A,B),axis=1)
+    AB0 = np.copy(AB)
 
-    for i in range(n):
-        # Encuentra el primer índice j con un 1 en la columna i
-        j = i
-        while j < n and AB[j, i] == 0:
-            j += 1
-        
-        # Si no se encontró un 1, sigue con la siguiente columna
-        if j == n:
-            continue
-        
-        # Intercambia filas para tener el 1 en la posición (i, i)
-        AB[[i, j]] = AB[[j, i]]
+    tamano = np.shape(AB)
+    n = tamano[0]
+    m = tamano[1]
+    AB = pivoteo_parcial(AB, n, m)
+    AB1 = np.copy(AB)
 
-        # Realiza eliminación hacia adelante
-        for k in range(n):
-            if k != i:
-                factor = AB[k, i] / AB[i, i]
-                AB[k, :] -= factor * AB[i, :]
+    # eliminación hacia adelante (por filas)
+    cont = 1
+    for i in range(0,n-1,1):
+        AB = pivoteo_parcial(AB,n, m)
+        pivote   = AB[i,i]
+        adelante = i + 1
+        for k in range(adelante,n,1):  # k inicia de adelante hasta la últim fila avanzando fila por fila
+            if(pivote!= 0):
+                factor  = AB[k,i]/pivote
+                AB = AB.astype(int)
+                print(cont)
+                cont = cont + 1
+                AB[k,:] = (AB[k,:]) ^ (AB[i,:]* int(factor))
 
-    # Normaliza las filas para que los elementos diagonales sean 1
-    for i in range(n):
-        if AB[i, i] != 0:
-            AB[i, :] /= AB[i, i]
+    # sustitución hacia atrás
+    ultfila = n-1
+    ultcolumna = m-1
+    X = np.zeros(n,dtype=float)
 
-    # Obtiene la solución como un vector de 0 y 1
-    solucion = [1 if valor > 0.5 else 0 for valor in AB[:, -1]]
+    for i in range(ultfila,0-1,-1):  # Para incluir el primera fila valor (0-1) en pasos de -1
+        suma = 0
+        for j in range(i+1,ultcolumna,1):
+            suma = suma + AB[i,j]*X[j]
+        b = AB[i,ultcolumna] #valor de la matriz B en la fila i
+        #X[i] = (b-suma)/AB[i,i]
+        X[i] = (b - suma) % 2
 
-    return solucion
+    X = np.transpose([X])
+
+    # SALIDA
+    print(X)
+    return X
+
+def pivoteo_parcial(AB, n, m):
+    # Pivoteo parcial por filas
+
+    # Para cada fila en AB
+    for i in range(0,n-1,1):
+        # columna desde diagonal i en adelante
+        columna  = abs(AB[i:,i])  #todas las filas desde i hasta el final de la matriz y solo la columna i.
+        dondemax = np.argmax(columna) #identifica la posición del elemento más grande en columna.
+
+        # dondemax no está en diagonal
+        if (dondemax !=0):
+            # intercambia filas
+            temporal = np.copy(AB[i,:])
+            AB[i,:] = AB[dondemax+i,:]
+            AB[dondemax+i,:] = temporal
+    return AB
