@@ -1,18 +1,17 @@
 import tkinter as tk
 from tkinter import ttk
-import numpy as np
-import utils
-from PIL import Image, ImageTk
 from tkinter import messagebox
+from PIL import Image, ImageTk
+import utils
 
 canvas = None
 ancho_celda = 0
 altura_celda = 0
 ventana_matriz = None
-matriz = [] 
+matriz = []
 
-def ver_solucion():  
-    if(len(matriz) != 0):
+def ver_solucion():
+    if len(matriz) != 0:
         print(matriz)
         ecuaciones = utils.crearEcuaciones(matriz)
         solucion = utils.resolverJuego(matriz, ecuaciones)
@@ -25,7 +24,7 @@ def generar_matriz():
     filas = int(entry_filas.get())
     columnas = int(entry_columnas.get())
     matriz = utils.crearMatriz(filas, columnas)
-    mostrar_matriz(matriz) 
+    mostrar_matriz(matriz)
 
 def mostrar_matriz(matriz):
     global canvas, ancho_celda, altura_celda, ventana_matriz
@@ -53,13 +52,13 @@ def mostrar_matriz(matriz):
             x1 = x0 + ancho_celda
             y1 = y0 + altura_celda
 
-            color = 'green' if matriz[i][j] == 1 else 'red'
+            color = 'lightgreen' if matriz[i][j] == 1 else 'lightcoral'
             cell = canvas.create_rectangle(x0, y0, x1, y1, fill=color)
 
     canvas.bind("<Button-1>", on_cell_click)
 
 def on_cell_click(event):
-    global canvas, ancho_celda, altura_celda, matriz  # Asegurarse de usar las variables globales
+    global canvas, ancho_celda, altura_celda, matriz
 
     widget = event.widget
     x, y = widget.canvasx(event.x), widget.canvasy(event.y)
@@ -87,45 +86,48 @@ def all_zeroes(matriz):
     return True
 
 ventana = tk.Tk()
-ventana.title("Lights out")
-ventana.geometry("800x500")  # Tamaño de la ventana
+ventana.title("Lights Out")
+ventana.geometry("800x500")
+ventana.configure(bg='#f8f8f8')
+
+# Estilo del tema
+style = ttk.Style()
+style.theme_use('clam')  
 
 # Título
-titulo = tk.Label(ventana, text="Lights out", font=("Arial", 16, "bold"))
+titulo = tk.Label(ventana, text="Lights Out", font=("Arial", 20, "bold"), bg='#f8f8f8', pady=10)
 titulo.pack()
 
-# Texto introductorio
-texto_intro = tk.Label(ventana, text="¡Bienvenido! Introduce las filas y columnas para generar la matriz.")
+
+texto_intro = tk.Label(ventana, text="¡Bienvenido! Introduce las filas y columnas para generar la matriz.", bg='#f8f8f8')
 texto_intro.pack()
 
-# Entradas para filas y columnas
-label_filas = tk.Label(ventana, text="Filas:", justify=tk.RIGHT)
+label_filas = tk.Label(ventana, text="Filas:", justify=tk.RIGHT, bg='#f8f8f8')
 label_filas.pack()
 entry_filas = tk.Entry(ventana)
 entry_filas.pack()
 
-label_columnas = tk.Label(ventana, text="Columnas:",  justify=tk.RIGHT)
+label_columnas = tk.Label(ventana, text="Columnas:", justify=tk.RIGHT, bg='#f8f8f8')
 label_columnas.pack()
 entry_columnas = tk.Entry(ventana)
 entry_columnas.pack()
 
 # Botón para generar la matriz
-boton_generar = tk.Button(ventana, text="Generar matriz", command=generar_matriz)
+boton_generar = tk.Button(ventana, text="Generar matriz", command=generar_matriz, bg='#4caf50', fg='white', pady=5)
 boton_generar.pack()
 
 # Mostrar matriz
 texto_matriz = tk.StringVar()
-label_matriz = tk.Label(ventana, textvariable=texto_matriz)
+label_matriz = tk.Label(ventana, textvariable=texto_matriz, bg='#f8f8f8')
 label_matriz.pack()
 
-# Botón para ver solución
-boton_solucion = ttk.Button(ventana, text="Ver solución", command=ver_solucion)
-boton_solucion.pack()
+# Botón para mostrar solución
+boton_solucion = ttk.Button(ventana, text="Ver solución", command=ver_solucion, style='TButton', cursor='hand2')
+boton_solucion.pack(pady=5)
 
-# Mostrar texto de resultado
+# Mostrar resultado
 texto_resultado = tk.StringVar()
-label_resultado = tk.Label(ventana, textvariable=texto_resultado)
+label_resultado = tk.Label(ventana, textvariable=texto_resultado, bg='#f8f8f8')
 label_resultado.pack()
 
 ventana.mainloop()
-
