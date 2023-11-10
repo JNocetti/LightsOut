@@ -199,8 +199,8 @@ def resolverJuego(matriz, sistema_ecuaciones):
         #X[i] = (b-suma)/AB[i,i]
         X[i] = (b - suma) % 2
 
-    X = np.transpose([X])
-
+  
+    
     # SALIDA
     print(X)
     return X
