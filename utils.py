@@ -115,8 +115,13 @@ def crearEcuaciones(matriz):
     #     print(matrizEcuaciones[num])
     return matrizEcuaciones
 
-def devolver_posicion_i_j(x):
-    vector = ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9']
+def devolver_posicion_i_j(x, matriz):
+    vector = []
+    cont = 1
+    for elementos in range(len(matriz[0]) * len(matriz[0])):
+        vector.append('x' + str(cont))
+        cont = cont + 1
+
     for i in range(len(vector)):
       if vector[i] == x:
         return i
@@ -144,18 +149,12 @@ def crearA_B(matriz, sistema_ecuaciones):
         for i in range(len(partes_x)):  
             x = partes_x[i]  
             pos_i = n_ecuacion
-            pos_j = devolver_posicion_i_j(x)  
+            pos_j = devolver_posicion_i_j(x, matriz)  
             A[pos_i][pos_j] = 1 
 
         parteIzq = parteIzquierda[1].replace(" ", "")
         B[n_ecuacion] = int(parteIzq)
     
-    # print("A")
-    # print(A)
-
-
-    # print("B") 
-    # print(B)
     return A, B
 
 
@@ -165,13 +164,13 @@ def resolverJuego(matriz, sistema_ecuaciones):
     
     # Matriz aumentada
     AB  = np.concatenate((A,B),axis=1)
-    AB0 = np.copy(AB)
+    
 
     tamano = np.shape(AB)
     n = tamano[0]
     m = tamano[1]
     AB = pivoteo_parcial(AB, n, m)
-    AB1 = np.copy(AB)
+   
 
     # eliminación hacia adelante (por filas)
     cont = 1
