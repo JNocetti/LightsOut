@@ -198,9 +198,7 @@ def resolverJuego(matriz, sistema_ecuaciones):
         b = AB[i,ultcolumna] #valor de la matriz B en la fila i
         #X[i] = (b-suma)/AB[i,i]
         X[i] = (b - suma) % 2
-
-    X = np.transpose([X])
-
+    
     # SALIDA
     print(X)
     return X
